@@ -159,7 +159,7 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Gallery" image="codegirl44.png" id="AVv-58-yBS"/>
                     <connections>
-                        <outlet property="colletionView" destination="Loe-2g-nPP" id="iOZ-Y4-Ria"/>
+                        <outlet property="collectionView" destination="Loe-2g-nPP" id="61w-jE-OKf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Faq-Gt-phU" userLabel="First Responder" sceneMemberID="firstResponder"/>

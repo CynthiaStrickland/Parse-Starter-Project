@@ -43,7 +43,7 @@ class API {
                     for object in objects {
                         let pfFileFromObject = object["image"] as! PFFile
                         let textFromObject = object["statusText"] as! String
-                        let newStatus = Status(statusText: textFromObject, statusImageData: pfFileFromObject)
+                        let newStatus = Status(image: nil, thumbnail: nil, status: "", statusText: textFromObject, statusImageData: pfFileFromObject)
                         arrayOfStatuses.append(newStatus)
                     }
                     completion(objects: arrayOfStatuses)
