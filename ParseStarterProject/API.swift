@@ -32,21 +32,25 @@ class API {
         }
     }
     
-    class func uploadImage(image: UIImage, completion: ParseCompletionHandler) {
+    class func getImages(completion: (objects: [Status]?) -> ()) {
         
-        if let imageData = UIImageJPEGRepresentation(image, 0.7) {
-            print(imageData)
-            let imageFile = PFFile(name: "Image", data: imageData)
-            let status = PFObject(className: "Status")
-            status["Image"] = imageFile
-            
-            status.saveInBackgroundWithBlock( { (sucess, error) -> Void in
-                if sucess {
-                    completion(sucess: sucess)
-                } else {
-                    completion(sucess: false)
+        let query = PFQuery(className: kParseClass)
+        query.whereKeyExists("image")
+        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+            if error == nil {
+                if let objects = objects {
+                    var arrayOfStatuses = [Status]()
+                    for object in objects {
+                        let pfFileFromObject = object["image"] as! PFFile
+                        let textFromObject = object["statusText"] as! String
+                        let newStatus = Status(statusText: textFromObject, statusImageData: pfFileFromObject)
+                        arrayOfStatuses.append(newStatus)
+                    }
+                    completion(objects: arrayOfStatuses)
                 }
-            })
+            } else {
+                print(error)
+            }
         }
     }
 }

@@ -13,69 +13,55 @@ protocol GalleryViewControllerDelegate {
     func galleryViewControllerDidFinish(image: UIImage)
 }
 
-class GalleryViewController: UIViewController, UICollectionViewDataSource {
+class GalleryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
     var delegate: GalleryViewControllerDelegate?
-//    
-//    
-//    
-//    func initializeGestureRecognizer() {
-//        var pinchGesture: UIPinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: Selector("recognizePinchGesture:"))
-//        imageView.addGestureRecognizer(pinchGesture)
-//    }
-//    
-//    func recognizePinchGesture(sender: UIPinchGestureRecognizer) {
-//        let scale = sender.scale
-//        let velocity = sender.velocity
-//        let imageView = "Pinch - scale = \(scale), velocity = \(velocity)"
-//        
-//    }
     
+    @IBOutlet weak var collectionView: UICollectionView!
     
-    @IBOutlet weak var colletionView: UICollectionView!
-    
-    let myCollectionViewLayout = CustomeFlowLayout()
-    
-    var posts = [PFObject]() {
+    var statuses = [Status]() {
         didSet {
-            self.colletionView.reloadData()
+            self.collectionView.reloadData()
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-                //CALLING GESTURE RECOGNIZER
-//        self.initializeGestureRecognizer()
-        
-        self.colletionView.dataSource = self
-        self.colletionView.collectionViewLayout = myCollectionViewLayout
-        let query = PFQuery(className: "Status")
-        
-        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
-            if let objects = objects {
-                self.posts = objects
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        uploadImage()
+    }
+    
+    func uploadImage() {
+        API.getImages { (objects) -> () in
+            if let arrayOfStatuses = objects {
+                self.statuses = arrayOfStatuses
             }
         }
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.posts.count
+        return statuses.count
     }
-        
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(GalleryCollectionViewCell.identifier(), forIndexPath: indexPath) as! GalleryCollectionViewCell
-        
-        let post = self.posts[indexPath.row]
-        
-        if let imageFile = post["image"] as? PFFile {
-            imageFile.getDataInBackgroundWithBlock({ (data, error) -> Void in
-                if let data = data {
-                    let image = UIImage(data: data)
-                    cell.imageView.image = image
-                }
-            })
-        }
-        
+        cell.imageStatus = statuses[indexPath.row]
         return cell
     }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        let collectionViewWidth = CGRectGetWidth(self.view.frame)
+        let width = (collectionViewWidth / 2.0) - 0.5
+        
+        let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        layout.itemSize = CGSizeMake(width, width)
+        layout.minimumLineSpacing = 1.0
+        layout.minimumInteritemSpacing = 1.0
+        
+        return layout.itemSize
+    }
+    
 }

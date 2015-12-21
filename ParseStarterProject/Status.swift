@@ -7,17 +7,23 @@
 //
 
 import UIKit
+import Parse
 
 class Status {
-    
-    var image: UIImage
-    var thumbnail: UIImage?
-    var status: String
-    
-    init(image: UIImage, thumbnail: UIImage?, status: String) {
-        self.image = image
-        self.thumbnail = thumbnail
-        self.status = status
+
+var image: UIImage
+var thumbnail:UIImage?
+var status: String
+var statusImageData: PFFile
+var statusImage: UIImage?
+var statusText = ""
+
+init(image: UIImage, thumbnail: UIImage?, status: String, statusText: String, statusImageData: PFFile) {
+    self.image = image
+    self.thumbnail = thumbnail
+    self.status = status
+    self.statusText = statusText
+    self.statusImageData = statusImageData
     }
 }
 

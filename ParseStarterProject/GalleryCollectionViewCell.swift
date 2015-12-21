@@ -15,4 +15,22 @@ class GalleryCollectionViewCell: UICollectionViewCell {
     class func identifier() -> String {
         return "GalleryCollectionViewCell"
     }
+    
+    var imageStatus: Status? {
+        didSet {
+            if imageStatus?.statusImage == nil {
+                imageStatus!.statusImageData.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                    if error == nil {
+                        self.imageStatus!.statusImage = UIImage(data: data!)
+                        NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+                            self.imageView.image = self.imageStatus!.statusImage
+                        })
+                    } else {
+                        print("error")
+                    }
+                })
+            }
+        }
+    }
+    
 }
